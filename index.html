@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>BALLOON BLASTER — Arcade To-Do</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ ATTRACT / TITLE SCREEN ============ -->
+  <section id="attract-screen" class="screen visible">
+    <div class="marquee">
+      <h1 class="game-title">BALLOON<span>BLASTER</span></h1>
+      <p class="tagline">★ THE ARCADE TO-DO LIST ★</p>
+    </div>
+    <div class="attract-body">
+      <div class="demo-balloons" aria-hidden="true">
+        <span class="demo-balloon b1"></span>
+        <span class="demo-balloon b2"></span>
+        <span class="demo-balloon b3"></span>
+      </div>
+      <p class="blink-text">— INSERT YOUR TIME TO PLAY —</p>
+     <div class="menu-buttons">
+        <button id="btn-how" class="arcade-btn pink">? HOW TO PLAY</button>
+        <button id="btn-surprise" class="arcade-btn cyan">▶ SURPRISE ME MODE</button>
+        <button id="btn-custom" class="arcade-btn yellow">✎ MY TASKS MODE</button>
+        <button id="btn-shop" class="arcade-btn green">🛒 SHOP</button>
+      </div>
+      <div id="daily-bonus" class="daily-bonus hidden">
+        <button id="btn-daily-bonus" class="arcade-btn yellow small">🎁 CLAIM DAILY BONUS +100</button>
+        <span id="daily-bonus-done" class="daily-done hidden">✓ BONUS CLAIMED — COME BACK TOMORROW!</span>
+      </div>
+      <div class="hiscore-strip">
+        <span>HI-SCORE&nbsp;<b id="attract-hiscore">000000</b></span>
+        <span>TASKS CLEARED&nbsp;<b id="attract-cleared">0</b></span>
+        <span>POINTS&nbsp;<b id="attract-points">0</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INSTRUCTIONS OVERLAY ============ -->
+  <section id="howto-screen" class="screen">
+    <div class="panel howto-panel">
+      <h2>HOW TO PLAY</h2>
+      <ol class="howto-list">
+        <li><b>AIM</b> with your mouse and <b>CLICK / TAP</b> to shoot balloons.</li>
+        <li>Only the <b class="glow-text">GLOWING BALLOON</b> can be popped — it holds your <b>NEXT TASK</b>.</li>
+        <li>When a balloon pops, its task appears on the <b>TASK STRIP</b>. Go do it in real life!</li>
+        <li>Come back and press <b class="done-text">✓ DONE</b> — only then does the next balloon unlock and start glowing.</li>
+        <li>Pop balloons <b>in order</b>. Locked balloons will not burst!</li>
+        <li>Finish all 8 tasks to hit <b class="glow-text">TASK CLEAR!</b></li>
+      </ol>
+      <div class="howto-tips">
+        <span>[R] RELOAD</span><span>[P] PAUSE</span><span>[M] MUTE</span>
+      </div>
+      <p class="tip-line">Combo pops = bonus points. Missing a shot resets your combo!</p>
+      <button class="arcade-btn cyan btn-back-attract">◀ BACK</button>
+    </div>
+  </section>
+
+  <!-- ============ CUSTOM TASK ENTRY ============ -->
+  <section id="entry-screen" class="screen">
+    <div class="panel entry-panel">
+      <h2>LOAD YOUR TASKS</h2>
+      <p class="sub">Type up to <b>8</b> real-life tasks. Each one gets blown into a balloon.</p>
+      <div class="entry-row">
+        <input id="task-input" type="text" maxlength="60" placeholder="e.g. Do 20 push-ups" autocomplete="off" />
+        <button id="btn-add-task" class="arcade-btn yellow">+ ADD</button>
+      </div>
+      <ul id="entry-list"></ul>
+      <p class="entry-count"><span id="entry-count">0</span>/8 LOADED</p>
+      <div class="entry-actions">
+        <button class="arcade-btn pink btn-back-attract">◀ BACK</button>
+        <button id="btn-fill-random" class="arcade-btn cyan">⚡ FILL FOR ME</button>
+        <button id="btn-start-custom" class="arcade-btn green" disabled>START ▶</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SHOP ============ -->
+  <section id="shop-screen" class="screen">
+    <div class="panel shop-panel">
+      <h2>PRIZE SHOP</h2>
+      <p class="shop-wallet">YOUR POINTS: <b id="shop-points">0</b></p>
+      <div class="shop-tabs">
+        <button id="tab-themes" class="shop-tab active">🎨 WEBSITE STYLES</button>
+        <button id="tab-skins" class="shop-tab">🎈 BALLOON SKINS</button>
+      </div>
+      <div id="shop-grid" class="shop-grid"></div>
+      <button class="arcade-btn pink btn-back-attract" id="btn-shop-back">◀ BACK</button>
+    </div>
+  </section>
+
+  <!-- ============ GAME SCREEN ============ -->
+  <section id="game-screen" class="screen">
+    <div id="hud">
+      <div class="hud-group">
+        <div class="hud-item"><label>SCORE</label><span id="hud-score">0</span></div>
+        <div class="hud-item"><label>HI</label><span id="hud-hiscore">0</span></div>
+        <div class="hud-item combo-item"><label>COMBO</label><span id="hud-combo">x1</span></div>
+      </div>
+      <div id="hud-progress">
+        <label>TASKS</label>
+        <div id="progress-pips"></div>
+      </div>
+      <div class="hud-group right">
+        <div class="hud-item"><label>AMMO</label><span id="hud-ammo">▮▮▮▮▮▮</span></div>
+        <button id="btn-pause" class="icon-btn" title="Pause [P]">❚❚</button>
+        <button id="btn-mute" class="icon-btn" title="Mute [M]">♪</button>
+        <button id="btn-quit" class="icon-btn" title="Quit to menu">✕</button>
+      </div>
+    </div>
+
+    <div id="stage">
+      <canvas id="game-canvas"></canvas>
+      <div id="float-layer" aria-hidden="true"></div>
+      <div id="scanlines" aria-hidden="true"></div>
+
+      <div id="taskbar">
+        <div id="taskbar-label">NEXT&nbsp;TASK</div>
+        <div id="taskbar-text">Shoot the glowing balloon!</div>
+        <div id="taskbar-actions">
+          <button id="btn-done" class="arcade-btn green small">✓ DONE</button>
+          <button id="btn-skip" class="arcade-btn pink small">↺ SKIP</button>
+        </div>
+      </div>
+
+      <aside id="task-panel">
+        <h3>MISSION LIST</h3>
+        <ul id="task-list"></ul>
+      </aside>
+    </div>
+
+    <div id="gun-deck" aria-hidden="true"><div id="gun">▲</div></div>
+  </section>
+
+  <!-- ============ PAUSE OVERLAY ============ -->
+  <div id="pause-overlay" class="overlay hidden">
+    <div class="panel small-panel">
+      <h2 class="blink-text">PAUSED</h2>
+      <button id="btn-resume" class="arcade-btn cyan">▶ RESUME</button>
+      <button class="arcade-btn pink btn-back-attract">✕ QUIT</button>
+    </div>
+  </div>
+
+  <!-- ============ GAME OVER / CLEAR ============ -->
+  <div id="gameover-overlay" class="overlay hidden">
+    <div class="panel small-panel">
+      <h2 id="go-title">TASK CLEAR!</h2>
+      <div class="go-stats">
+        <p>FINAL SCORE <b id="go-score">0</b></p>
+        <p>ACCURACY <b id="go-accuracy">0%</b></p>
+        <p>TASKS DONE <b id="go-tasks">0</b></p>
+        <p id="go-newhi" class="newhi hidden">★ NEW HI-SCORE! ★</p>
+      </div>
+      <button id="btn-again" class="arcade-btn cyan">↺ PLAY AGAIN</button>
+      <button class="arcade-btn pink btn-back-attract">◀ MENU</button>
+    </div>
+  </div>
+
+</div>
+<script src="game.js"></script>
+</body>
+</html>
